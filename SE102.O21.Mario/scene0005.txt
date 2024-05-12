@@ -4,6 +4,7 @@ mario.txt
 coin.txt
 cloud.txt
 brick.txt
+mushroom.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -42,4 +43,7 @@ brick.txt
 
 #Portal 
 50	200	160	216	180	1
+
+#Mushroom
+6	100	120
 
