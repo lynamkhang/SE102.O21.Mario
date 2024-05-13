@@ -5,6 +5,7 @@ coin.txt
 cloud.txt
 brick.txt
 mushroom.txt
+qblock.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -46,4 +47,7 @@ mushroom.txt
 
 #Mushroom
 6	100	120
+
+#QBlock
+7	100	120	0	1
 

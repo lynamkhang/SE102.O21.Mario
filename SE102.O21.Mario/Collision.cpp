@@ -171,7 +171,7 @@ void CCollision::Scan(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* objDe
 			delete e;
 	}
 
-	//std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
+	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 
 void CCollision::Filter( LPGAMEOBJECT objSrc,

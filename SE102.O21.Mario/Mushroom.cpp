@@ -1,9 +1,10 @@
 #include "Mushroom.h"
 
-CMushroom::CMushroom(float x, float y) :CGameObject(x, y)
+CMushroom::CMushroom(float x, float y):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = MUSHROOM_GRAVITY;
+	StartRising();
 	SetState(MUSHROOM_STATE_MOVING);
 }
 
@@ -41,6 +42,17 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
+
+	if (GetTickCount64() - rise_start > MUSHROOM_RISING_TIME)
+	{
+		rise_start = 0;
+		rising = 0;
+	}
+
+	if (rising)
+		y -= 0.5;
+	else
+		state = MUSHROOM_STATE_MOVING;
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);

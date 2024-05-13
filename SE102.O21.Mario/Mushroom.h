@@ -2,10 +2,11 @@
 
 #define MUSHROOM_GRAVITY 0.002f
 #define MUSHROOM_MOVING_SPEED 0.05f
+#define MUSHROOM_RISING_TIME 500
 
 
 #define MUSHROOM_BBOX_WIDTH 16
-#define MUSHROOM_BBOX_HEIGHT 14
+#define MUSHROOM_BBOX_HEIGHT 16
 
 
 #define MUSHROOM_STATE_MOVING 100
@@ -19,7 +20,8 @@ class CMushroom : public CGameObject
 protected:
 	float ax;
 	float ay;
-
+	DWORD rise_start;
+	int rising = 0;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -33,5 +35,6 @@ protected:
 
 public:
 	CMushroom(float x, float y);
+	void StartRising() { rising = 1; rise_start = DWORD(GetTickCount64()); }
 	virtual void SetState(int state);
 };

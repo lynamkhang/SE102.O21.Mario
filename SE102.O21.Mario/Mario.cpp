@@ -8,6 +8,7 @@
 #include "Coin.h"
 #include "Mushroom.h"
 #include "Portal.h"
+#include "QBlock.h"
 
 #include "Collision.h"
 
@@ -57,6 +58,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	else if (dynamic_cast<CQBlock*>(e->obj))
+		OnCollisionWithQBlock(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -102,7 +105,7 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
-	if (level = MARIO_LEVEL_SMALL)
+	if (level < MARIO_LEVEL_BIG)
 	{
 		level = MARIO_LEVEL_BIG;
 	}
@@ -112,6 +115,19 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	CPortal* p = (CPortal*)e->obj;
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
+}
+
+void CMario::OnCollisionWithQBlock(LPCOLLISIONEVENT e)
+{
+	CQBlock* qblock = (CQBlock*)e->obj;
+	if (e->ny > 0)
+	{
+		if (qblock->GetState() != QBLOCK_STATE_EMP)
+		{
+
+			qblock->SetState(QBLOCK_STATE_EMP);
+		}
+	}
 }
 
 //
@@ -370,6 +386,10 @@ void CMario::SetLevel(int l)
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
+	}
+	else 
+	{
+		y += (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	level = l;
 }
