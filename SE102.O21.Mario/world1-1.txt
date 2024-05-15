@@ -1,0 +1,28 @@
+# list of object assets to load in this scene
+[ASSETS]
+mario.txt
+brick.txt
+pipe.txt
+#
+[OBJECTS]
+# type	x	y	extra_settings per object type
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 5 = Platform, 8 = Pipe
+# See OBJECT_TYPE constants in AssetIDs.h
+
+# MARIO
+0	120	10
+
+#PLATFORM
+5	0	180	16	16	39	20002	20001	20003
+5	624	164	16	16	29	20002	20001	20003
+5	624	180	16	16	29	20005	20004	20006
+
+
+#PIPE BODY
+8	368	164	10022
+8	384	164	10023
+8	368	148	10022
+8	384	148	10023
+#PIPE TOP
+8	368	132	10020
+8	384	132	10021

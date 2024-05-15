@@ -1,5 +1,5 @@
 [SETTINGS]
-start	5
+start	6
 width	320
 height	240
 
@@ -19,3 +19,4 @@ height	240
 10	textures\enemies.png
 20	textures\misc.png
 30	textures\misc2.png
+40	textures\tiles.png
