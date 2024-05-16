@@ -3,6 +3,7 @@
 mario.txt
 brick.txt
 pipe.txt
+colorblock.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -23,6 +24,12 @@ pipe.txt
 8	384	164	10023
 8	368	148	10022
 8	384	148	10023
+
 #PIPE TOP
 8	368	132	10020
 8	384	132	10021
+
+#COLORBLOCK
+9	240	132	16	16	3	20030	20031	20032
+9	240	148	16	16	3	20033	20034	20035
+9	240	164	16	16	3	20036	20037	20038

@@ -1,0 +1,18 @@
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#PINK
+#TOP
+20030	52	1	67	16	30
+20031	69	1	84	16	30
+20032	86	1	101	16	30
+#BODY
+20033	52	18	67	33	30
+20034	69	18	84	33	30
+20035	86	18	101	33	30
+#BOTTOM
+20036	52	35	67	50	30
+20037	69	35	84	50	30
+20038	86	35	101	50	30
+
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]

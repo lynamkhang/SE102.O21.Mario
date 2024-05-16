@@ -30,6 +30,7 @@ protected:
 
 	bool isDeleted; 
 
+
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
@@ -39,6 +40,7 @@ public:
 	int GetState() { return this->state; }
 	virtual void Delete() { isDeleted = true;  }
 	bool IsDeleted() { return isDeleted; }
+
 
 	void RenderBoundingBox();
 
@@ -64,6 +66,9 @@ public:
 	
 	// Is this object blocking other object? If YES, collision framework will automatically push the other object
 	virtual int IsBlocking() { return 1; }
+
+	// Is this object collide with other object at certain direction ( like ColorBox )
+	virtual int IsDirectionColliable(float nx, float ny) { return 1; }
 
 	~CGameObject();
 
