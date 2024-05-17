@@ -1,17 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include "AssetIDs.h"
+#include <cmath>
 
 #include "PlayScene.h"
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
-#include "Coin.h"
-#include "Mushroom.h"
-#include "Platform.h"
-#include "Pipe.h"
-#include "ColorBlock.h"
+
+
 
 #include "SampleKeyEventHandler.h"
 
@@ -122,6 +120,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_ENVIRONMENT:
+	{
+		int aniId = (int)atoi(tokens[3].c_str());
+		obj = new CEnvironment(x, y, aniId);
+		break;
+	}
 	case OBJECT_TYPE_COLORBLOCK:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());
@@ -301,8 +305,13 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	//render object first
 	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
+		if (objects[i] != player)
+			objects[i]->Render();
+	//then render player after
+	if (player)
+		player->Render();
 }
 
 /*

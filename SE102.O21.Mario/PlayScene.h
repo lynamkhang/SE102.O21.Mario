@@ -4,9 +4,14 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Brick.h"
+#include "Coin.h"
 #include "Mario.h"
 #include "Goomba.h"
 #include "QBlock.h"
+#include "Platform.h"
+#include "Pipe.h"
+#include "ColorBlock.h"
+#include "Environment.h"
 //#include "Koopas.h"
 
 
@@ -17,6 +22,7 @@ protected:
 	LPGAMEOBJECT player;					
 
 	vector<LPGAMEOBJECT> objects;
+	vector<CEnvironment*> background;
 
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
