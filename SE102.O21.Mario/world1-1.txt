@@ -6,6 +6,7 @@ pipe.txt
 colorblock.txt
 qblock.txt
 environment.txt
+goomba.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -100,15 +101,15 @@ environment.txt
 
 
 #? BLOCK
-7	176	116	0	1
-7	192	116	0	1
-7	224	68	0	1
-7	240	68	0	1
+7	176	116	0	
+7	192	116	0	
+7	224	68	0	
+7	240	68	0	
 
-7	432	86	0	1
+7	432	86	0	
 
-7	672	148	0	1
-7	720	116	0	1
+7	672	148	0	
+7	720	116	0	
 
 #GRASS TILES
 10	16	164	400
@@ -220,5 +221,12 @@ environment.txt
 10	768	68	801
 10	784	68	801
 10	800	68	802
+
+#ENEMIES
+#GOOMBA
+2	224	164
+2	400	164
+
+
 
 

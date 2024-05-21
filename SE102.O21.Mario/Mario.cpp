@@ -125,7 +125,7 @@ void CMario::OnCollisionWithQBlock(LPCOLLISIONEVENT e)
 		if (qblock->GetState() != QBLOCK_STATE_EMP)
 		{
 
-			qblock->SetState(QBLOCK_STATE_EMP);
+			qblock->SetState(QBLOCK_STATE_HIT);
 		}
 	}
 }

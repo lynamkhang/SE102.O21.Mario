@@ -2,31 +2,32 @@
 #include "Mushroom.h"
 #include "AssetIDs.h"
 
-CQBlock::CQBlock(float x, float y, int setting, int stack):CGameObject(x, y)
+CQBlock::CQBlock(float x, float y, int itemType):CGameObject(x, y)
 {
-	this->setting = setting;
-	ring_start = NULL;
-	min = y;
-	this->stack = stack;
-	SetState(QBLOCK_STATE_QUES);
+	this->itemType = itemType;
+	baseY = y;
 }
 
 void CQBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	//bug the question block fall out of scene
 	CGameObject::Update(dt, coObjects);
-	if (GetTickCount64() - ring_start > QBLOCK_RINGING_TIME)
+	y += vy * dt;
+	if (state = QBLOCK_STATE_HIT) 
 	{
-		ring_start = 0;
-		ringing = 0;
-		y = min;
-	}
-
-	if (ringing)
-	{
-		if (GetTickCount64() - ring_start >= QBLOCK_RINGING_TIME / 2)
-			y += 1.5;
-		else
-			y -= 1.5;
+		if (y < baseY - QBLOCK_BOUND_OFFSET)
+		{
+			vy = QBLOCK_BOUND_SPEED;
+			SetState(QBLOCK_STATE_EMP);
+		}
+		else if (state == QBLOCK_STATE_EMP)
+		{
+			if (y > baseY)
+			{
+				vy = 0;
+				y = baseY;
+			}
+		}
 	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -51,15 +52,29 @@ void CQBlock::GetBoundingBox(float& l, float& t, float& r, float& b)
 	b = t + QBLOCK_BBOX_HEIGHT;
 }
 
-CGameObject* CQBlock::ShowItem() 
+void CQBlock::SetState(int state)
 {
-	CGameObject* obj = NULL;
-	if (setting == 0)
+	CGameObject::SetState(state);
+	switch (state)
 	{
-		obj = new CMushroom(this->x, this->y);
+		case QBLOCK_STATE_EMP:
+		{
+			vy = QBLOCK_BOUND_SPEED;
+			isEmpty = true;
+			break;
+		}
+		case QBLOCK_STATE_HIT:
+		{
+			vy = -QBLOCK_BOUND_SPEED;
+			break;
+		}
+		default:
+		{
+			isEmpty = false;
+			break;
+		}
 	}
-
-	return obj;
 }
+
 
 

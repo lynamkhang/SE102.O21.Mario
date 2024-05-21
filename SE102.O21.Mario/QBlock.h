@@ -11,29 +11,26 @@
 #define QBLOCK_BBOX_WIDTH 16
 #define QBLOCK_BBOX_HEIGHT 16
 
-#define QBLOCK_STATE_QUES 100
-#define QBLOCK_STATE_EMP 200
+#define QBLOCK_STATE_HIT 100
+#define QBLOCK_STATE_EMP 101
 
-#define QBLOCK_RINGING_TIME 100
+#define QBLOCK_BOUND_OFFSET 10
+#define QBLOCK_BOUND_SPEED 0.07f
+
 
 
 class CQBlock : public CGameObject {
 protected:
-	DWORD ring_start;
-	float min = 0;
-	
+	bool isEmpty = false;
+	float baseY;
+	int itemType = 0;
 
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
 	
-
 public:
-	int setting = 0;
-	int ringing = 0;
-	int trigger = 0;
-	int attack = 0;
-	int stack = 1;
-	CQBlock(float x, float y, int setting, int stack);
-	CGameObject* ShowItem();
+	CQBlock(float x, float y, int itemType);
+	void ShowItem();
+	virtual void SetState(int state);
 };

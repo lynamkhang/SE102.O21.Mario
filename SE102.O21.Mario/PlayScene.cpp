@@ -150,10 +150,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	//case OBJECT_TYPE_MUSHROOM: obj = new CMushroom(x, y); break;
 	case OBJECT_TYPE_QBLOCK: {
-		int setting = (int)atoi(tokens[3].c_str());
-		int stack = (int)atoi(tokens[4].c_str());
+		int itemType= (int)atoi(tokens[3].c_str());
 
-		obj = new CQBlock(x, y, setting, stack);
+		obj = new CQBlock(x, y, itemType);
 
 		break;
 	}
