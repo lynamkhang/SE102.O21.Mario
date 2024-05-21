@@ -10,27 +10,26 @@ CQBlock::CQBlock(float x, float y, int itemType):CGameObject(x, y)
 
 void CQBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//bug the question block fall out of scene
 	CGameObject::Update(dt, coObjects);
 	y += vy * dt;
-	if (state = QBLOCK_STATE_HIT) 
+
+	if (state == QBLOCK_STATE_HIT)
 	{
-		if (y < baseY - QBLOCK_BOUND_OFFSET)
+		if (y <= baseY - QBLOCK_BOUND_OFFSET)
 		{
-			vy = QBLOCK_BOUND_SPEED;
-			SetState(QBLOCK_STATE_EMP);
+			vy = QBLOCK_BOUND_SPEED; // Start moving down
 		}
-		else if (state == QBLOCK_STATE_EMP)
+		else if (y >= baseY)
 		{
-			if (y > baseY)
-			{
-				vy = 0;
-				y = baseY;
-			}
+			vy = 0; // Stop moving
+			y = baseY; // Correct position
+			SetState(QBLOCK_STATE_EMP); // Transition to empty state
 		}
 	}
+
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
+
 
 void CQBlock::Render()
 {
@@ -59,7 +58,7 @@ void CQBlock::SetState(int state)
 	{
 		case QBLOCK_STATE_EMP:
 		{
-			vy = QBLOCK_BOUND_SPEED;
+			vy = 0;
 			isEmpty = true;
 			break;
 		}
