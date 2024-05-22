@@ -3,6 +3,8 @@
 mario.txt
 brick.txt
 pipe.txt
+coin.txt
+mushroom.txt
 colorblock.txt
 qblock.txt
 environment.txt
@@ -104,7 +106,7 @@ goomba.txt
 7	176	116	0	
 7	192	116	0	
 7	224	68	0	
-7	240	68	0	
+7	240	68	1	
 
 7	432	86	0	
 

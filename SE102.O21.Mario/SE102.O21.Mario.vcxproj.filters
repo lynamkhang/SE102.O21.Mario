@@ -173,5 +173,49 @@
     <ClCompile Include="Environment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="brick.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="cloud.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="coin.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="colorblock.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="environment.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="goomba.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="mario.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="mario-sample.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="mushroom.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="pipe.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="qblock.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="scene01.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="world1-1.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

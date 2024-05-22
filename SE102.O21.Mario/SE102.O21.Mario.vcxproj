@@ -180,10 +180,26 @@
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QBlock.cpp" />
     <ClCompile Include="SampleKeyEventHandler.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="brick.txt" />
+    <Text Include="cloud.txt" />
+    <Text Include="coin.txt" />
+    <Text Include="colorblock.txt" />
+    <Text Include="environment.txt" />
+    <Text Include="goomba.txt" />
+    <Text Include="mario-sample.txt" />
+    <Text Include="mario.txt" />
+    <Text Include="mushroom.txt" />
+    <Text Include="pipe.txt" />
+    <Text Include="qblock.txt" />
+    <Text Include="scene01.txt" />
+    <Text Include="world1-1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

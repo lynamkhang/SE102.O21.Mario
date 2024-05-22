@@ -1,6 +1,10 @@
 #include "QBlock.h"
 #include "Mushroom.h"
+#include "Coin.h"
 #include "AssetIDs.h"
+#include "Game.h"
+#include "PlayScene.h"
+
 
 CQBlock::CQBlock(float x, float y, int itemType):CGameObject(x, y)
 {
@@ -51,6 +55,26 @@ void CQBlock::GetBoundingBox(float& l, float& t, float& r, float& b)
 	b = t + QBLOCK_BBOX_HEIGHT;
 }
 
+void CQBlock::ShowItem() {
+	//bug the coin didn't dissapear 
+	if (itemType == 0)
+	{
+		CCoin* coin = new CCoin(x, y);
+		coin->SetState(COIN_STATE_FLY); // Set the coin to fly
+
+		// Add the coin to your game objects
+		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
+	}
+	//bug the mushroom spawn at mario
+	else if (itemType == 1)
+	{
+		CMushroom* mushroom = new CMushroom(x, y);
+		
+		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
+
+	}
+}
+
 void CQBlock::SetState(int state)
 {
 	CGameObject::SetState(state);
@@ -65,6 +89,7 @@ void CQBlock::SetState(int state)
 		case QBLOCK_STATE_HIT:
 		{
 			vy = -QBLOCK_BOUND_SPEED;
+			ShowItem();
 			break;
 		}
 		default:
@@ -74,6 +99,5 @@ void CQBlock::SetState(int state)
 		}
 	}
 }
-
 
 
