@@ -19,15 +19,16 @@ void CQBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (state == QBLOCK_STATE_HIT)
 	{
-		if (y <= baseY - QBLOCK_BOUND_OFFSET)
+		if (y <= baseY - QBLOCK_BOUNCE_OFFSET)
 		{
-			vy = QBLOCK_BOUND_SPEED; // Start moving down
+			vy = QBLOCK_BOUNCE_SPEED; // Start moving down
 		}
 		else if (y >= baseY)
 		{
 			vy = 0; // Stop moving
 			y = baseY; // Correct position
-			SetState(QBLOCK_STATE_EMP); // Transition to empty state
+			ShowItem();
+			SetState(QBLOCK_STATE_EMP); // Transition to empty state	
 		}
 	}
 
@@ -69,7 +70,7 @@ void CQBlock::ShowItem() {
 	else if (itemType == 1)
 	{
 		CMushroom* mushroom = new CMushroom(x, y);
-		
+
 		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
 
 	}
@@ -88,8 +89,7 @@ void CQBlock::SetState(int state)
 		}
 		case QBLOCK_STATE_HIT:
 		{
-			vy = -QBLOCK_BOUND_SPEED;
-			ShowItem();
+			vy = -QBLOCK_BOUNCE_SPEED;
 			break;
 		}
 		default:

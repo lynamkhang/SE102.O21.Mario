@@ -12,6 +12,7 @@
 #include "Pipe.h"
 #include "ColorBlock.h"
 #include "Environment.h"
+#include "Plant.h"
 //#include "Koopas.h"
 
 

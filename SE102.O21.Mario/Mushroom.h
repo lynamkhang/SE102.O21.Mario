@@ -1,4 +1,6 @@
 #include "GameObject.h"
+#include "Mario.h"
+#include "PlayScene.h"
 
 #define MUSHROOM_MOVING_SPEED 0.05f
 #define MUSHROOM_RISING_SPEED 0.05f
@@ -21,8 +23,11 @@
 class CMushroom : public CGameObject
 {
 protected:
+	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
 	float ax;
 	float ay;
+	int nx;
 	float startY;
 
 	DWORD rise_start;

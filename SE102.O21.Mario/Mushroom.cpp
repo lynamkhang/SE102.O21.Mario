@@ -6,7 +6,7 @@ CMushroom::CMushroom(float x, float y):CGameObject(x, y)
 	this->ay = MUSHROOM_GRAVITY;
 	this->startY = y;
 	StartRising();
-	SetState(MUSHROOM_STATE_RISING);
+	this->nx = mario->GetDirection();
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -47,12 +47,12 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (startY - y >= MUSHROOM_RISING_HEIGHT)
 		{
 			rising = false;
-			SetState(MUSHROOM_STATE_MOVING);
 			y = startY - MUSHROOM_RISING_HEIGHT; 
 		}
 	}
 	else
 	{
+		SetState(MUSHROOM_STATE_MOVING);
 		vy += ay * dt;
 	}
 
@@ -75,11 +75,7 @@ void CMushroom::SetState(int state)
 	switch (state)
 	{
 		case MUSHROOM_STATE_MOVING:
-			vx = -MUSHROOM_MOVING_SPEED;
-			break;
-		case MUSHROOM_STATE_RISING:
-			vx = 0;
-			vy = 0;
+			vx = MUSHROOM_MOVING_SPEED * nx;
 			break;
 	}
 }
