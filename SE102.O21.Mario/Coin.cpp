@@ -1,4 +1,6 @@
 #include "Coin.h"
+#include "PlayScene.h"
+#include "Mario.h"
 
 CCoin::CCoin(float x, float y) : CGameObject(x, y)
 {
@@ -30,7 +32,7 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         {
             vy = 0; // Stop moving
             y = startY; // Correct position
-            SetState(COIN_STATE_IDLE); // Transition to idle state
+            SetState(COIN_STATE_DIE); // Transition to die
         }
     }
 
@@ -48,13 +50,21 @@ void CCoin::GetBoundingBox(float& l, float& t, float& r, float& b)
 void CCoin::SetState(int state)
 {
     CGameObject::SetState(state);
+    CPlayScene* currentScene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CMario* mario = (CMario*)currentScene->GetPlayer();
     switch (state)
     {
-    case COIN_STATE_FLY:
-        vy = -COIN_FLY_SPEED;
-        break;
-    case COIN_STATE_IDLE:
-        vy = 0;
-        break;
+        case COIN_STATE_FLY:
+            vy = -COIN_FLY_SPEED;
+            break;
+        case COIN_STATE_IDLE:
+            vy = 0;
+            break;
+        case COIN_STATE_DIE:
+        {
+            this->Delete();
+            mario->SetCoin();
+            break;
+        }
     }
 }

@@ -4,8 +4,9 @@ CMushroom::CMushroom(float x, float y):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = MUSHROOM_GRAVITY;
+	this->startY = y;
 	StartRising();
-	SetState(MUSHROOM_STATE_MOVING);
+	SetState(MUSHROOM_STATE_RISING);
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -40,19 +41,20 @@ void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vy += ay * dt;
-	vx += ax * dt;
-
-	if (GetTickCount64() - rise_start > MUSHROOM_RISING_TIME)
-	{
-		rise_start = 0;
-		rising = 0;
-	}
-
 	if (rising)
-		y -= 0.5;
+	{
+		y -= MUSHROOM_RISING_SPEED * dt;
+		if (startY - y >= MUSHROOM_RISING_HEIGHT)
+		{
+			rising = false;
+			SetState(MUSHROOM_STATE_MOVING);
+			y = startY - MUSHROOM_RISING_HEIGHT; 
+		}
+	}
 	else
-		state = MUSHROOM_STATE_MOVING;
+	{
+		vy += ay * dt;
+	}
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -72,8 +74,12 @@ void CMushroom::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case MUSHROOM_STATE_MOVING:
-		vx = -MUSHROOM_MOVING_SPEED;
-		break;
+		case MUSHROOM_STATE_MOVING:
+			vx = -MUSHROOM_MOVING_SPEED;
+			break;
+		case MUSHROOM_STATE_RISING:
+			vx = 0;
+			vy = 0;
+			break;
 	}
 }

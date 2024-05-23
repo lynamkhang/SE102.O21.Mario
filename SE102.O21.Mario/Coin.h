@@ -12,6 +12,7 @@
 
 #define COIN_STATE_IDLE 0
 #define COIN_STATE_FLY 1
+#define COIN_STATE_DIE 2
 
 #define COIN_FLY_SPEED 0.3f
 #define COIN_GRAVITY 0.3f

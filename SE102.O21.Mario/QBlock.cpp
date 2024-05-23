@@ -56,16 +56,16 @@ void CQBlock::GetBoundingBox(float& l, float& t, float& r, float& b)
 }
 
 void CQBlock::ShowItem() {
-	//bug the coin didn't dissapear 
 	if (itemType == 0)
 	{
-		CCoin* coin = new CCoin(x, y);
+		
+		CCoin* coin = new CCoin(x, y - QBLOCK_BBOX_HEIGHT);
 		coin->SetState(COIN_STATE_FLY); // Set the coin to fly
 
 		// Add the coin to your game objects
 		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 	}
-	//bug the mushroom spawn at mario
+
 	else if (itemType == 1)
 	{
 		CMushroom* mushroom = new CMushroom(x, y);

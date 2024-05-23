@@ -304,11 +304,24 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	//render object first
+	// First, render all objects except player and question blocks
 	for (int i = 0; i < objects.size(); i++)
+	{
+		if (dynamic_cast<CQBlock*>(objects[i]))
+			continue; // Skip question blocks for now
+
 		if (objects[i] != player)
 			objects[i]->Render();
-	//then render player after
+	}
+
+	// Then, render all question blocks
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (dynamic_cast<CQBlock*>(objects[i]))
+			objects[i]->Render();
+	}
+
+	// Finally, render the player
 	if (player)
 		player->Render();
 }
