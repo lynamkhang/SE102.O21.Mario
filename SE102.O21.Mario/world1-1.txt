@@ -9,6 +9,7 @@ colorblock.txt
 qblock.txt
 environment.txt
 goomba.txt
+plant.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -230,5 +231,6 @@ goomba.txt
 2	400	164
 
 
-
+#PLANT
+11	376	141
 

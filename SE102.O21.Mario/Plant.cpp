@@ -2,7 +2,9 @@
 
 CPlant::CPlant(float x, float y) : CGameObject(x, y)
 {
+	SetState(PLANT_STATE_UP);
 	this->baseY = y;
+	this->maxY = y - PLANT_BBOX_HEIGHT;
 }
 
 void CPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -27,17 +29,103 @@ void CPlant::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	y += vy * dt;
+	if (state == PLANT_STATE_DOWN) {
+		if (y >= baseY) {
+			y = baseY;
+			vy = 0;
+			if (GetTickCount64() - rise_start >= 3000) {
+				SetState(PLANT_STATE_UP);
+			}
+		}
+	}
 
+	else if (state == PLANT_STATE_UP) {
+		if (y <= baseY - PLANT_BBOX_HEIGHT) {
+			y = baseY - PLANT_BBOX_HEIGHT;
+			vy = 0;
+			if (GetTickCount64() - rise_start >= 3000) {
+				SetState(PLANT_STATE_DOWN);
+			}
+		}
+	}
+	
+	if (y == maxY) //check if reach max height
+	{
+		climax = true;
+	}
+	else
+	{
+		climax = false;
+	}
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
 void CPlant::Render()
 {
-	int aniId = ID_ANI_PLANT_NORMAL;
+	CGame* game = CGame::GetInstance();
+	float camX;
+	float camY;
+	float scrw = float(game->GetBackBufferWidth());
+	game->GetCamPos(camX, camY);
+
+	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
+
+	if (!mario) return;
+	
+	float marioX, marioY;
+	mario->GetPosition(marioX, marioY);
+
+	if (x > camX + scrw)		//if out of camera don't render
+		return;
+
+	int aniId = ID_ANI_PLANT_DOWN_LEFT;
 	if (state == PLANT_STATE_DIE)
 	{
-		//aniId = ID_ANI_PLANT_DIE;
+		aniId = ID_ANI_PLANT_DIE;
+	}
+	//check mario location to render corresponding animations
+	else if (marioX < this->x && marioY > this->y) 
+	{
+		if (climax) 
+		{
+			aniId = ID_ANI_PLANT_DOWN_LEFT_STILL;
+		}
+	}
+	else if (marioX < this->x && marioY < this->y)
+	{
+		if (climax)
+		{
+			aniId = ID_ANI_PLANT_UP_LEFT_STILL;
+		}
+		else
+		{
+			aniId = ID_ANI_PLANT_UP_LEFT;
+		}
+	}
+	else if (marioX > this->x && marioY > this->y)
+	{
+		if (climax)
+		{
+			aniId = ID_ANI_PLANT_DOWN_RIGHT_STILL;
+		}
+		else
+		{
+			aniId = ID_ANI_PLANT_DOWN_RIGHT;
+		}
+	}
+	else if (marioX > this->x && marioY < this->y)
+	{
+		if (climax)
+		{
+			aniId = ID_ANI_PLANT_UP_RIGHT_STILL;
+		}
+		else
+		{
+			aniId = ID_ANI_PLANT_UP_RIGHT;
+		}
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -49,9 +137,15 @@ void CPlant::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-		case PLANT_STATE_NORMAL:
+		case PLANT_STATE_DOWN:
+			vy = PLANT_RISING_SPEED;
+			rise_start = GetTickCount64();
 			break;
+		case PLANT_STATE_UP:
+			vy -= PLANT_RISING_SPEED;
+			rise_start = GetTickCount64();
 		case PLANT_STATE_DIE:
+			die_start = GetTickCount64();
 			break;
 	}
 }

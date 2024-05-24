@@ -1,7 +1,7 @@
 [SETTINGS]
 start	6
 width	320
-height	240
+height	280
 
 #id	type	file
 # type: 0: intro, 1: play scene 
@@ -21,3 +21,5 @@ height	240
 30	textures\misc2.png
 40	textures\tiles.png
 50	textures\enemies2.png
+60	textures\enemies3.png
+61	textures\enemies3flip.png
