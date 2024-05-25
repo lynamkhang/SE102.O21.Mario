@@ -9,8 +9,8 @@ CPlant::CPlant(float x, float y) : CGameObject(x, y)
 
 void CPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x - PLANT_BBOX_WIDTH / 2;
-	top = y - PLANT_BBOX_HEIGHT / 2;
+	left = x;
+	top = y;
 	right = left + PLANT_BBOX_WIDTH;
 	bottom = top + PLANT_BBOX_HEIGHT;
 }
@@ -60,6 +60,7 @@ void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isUnderPipe = false;
 			if (GetTickCount64() - rise_start >= 3000) {
 				SetState(PLANT_STATE_DOWN);
+				ShootFireBall();
 			}
 		}
 	}
@@ -165,4 +166,8 @@ void CPlant::GetMarioPosition() {
 	mario->GetPosition(marioX, marioY);
 }
 
-
+void CPlant::ShootFireBall()
+{
+	CPlantFireBall* fireball = new CPlantFireBall(this->x, this->y);
+	((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(fireball);
+}

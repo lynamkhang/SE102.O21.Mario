@@ -149,6 +149,7 @@
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Plant.h" />
+    <ClInclude Include="PlantFireBall.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Plant.cpp" />
+    <ClCompile Include="PlantFireBall.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Portal.cpp" />
@@ -200,6 +202,7 @@
     <Text Include="mushroom.txt" />
     <Text Include="pipe.txt" />
     <Text Include="plant.txt" />
+    <Text Include="plantfireball.txt" />
     <Text Include="qblock.txt" />
     <Text Include="scene01.txt" />
     <Text Include="world1-1.txt" />

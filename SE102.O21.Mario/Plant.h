@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "PlayScene.h"
+#include "PlantFireBall.h"
 #include "Mario.h"
 
 
@@ -53,6 +54,7 @@ protected:
 public:
 	CPlant(float x, float y);
 	void GetMarioPosition();
+	void ShootFireBall();
 	virtual void SetState(int state);
 
 };

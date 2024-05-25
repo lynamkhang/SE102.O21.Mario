@@ -9,6 +9,8 @@
 #include "Mushroom.h"
 #include "Portal.h"
 #include "QBlock.h"
+#include "Plant.h"
+#include "PlantFireBall.h"
 
 #include "Collision.h"
 
@@ -60,6 +62,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	else if (dynamic_cast<CQBlock*>(e->obj))
 		OnCollisionWithQBlock(e);
+	else if (dynamic_cast<CPlant*>(e->obj))
+		OnCollisionWithPlant(e);
+	else if (dynamic_cast<CPlantFireBall*>(e->obj))
+		OnCollisionWithPlantFireBall(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -126,6 +132,45 @@ void CMario::OnCollisionWithQBlock(LPCOLLISIONEVENT e)
 		{
 
 			qblock->SetState(QBLOCK_STATE_HIT);
+		}
+	}
+}
+
+void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
+{
+	CPlant* plant = (CPlant*)e->obj;
+	if (untouchable == 0)
+	{
+		if (plant->GetState() != PLANT_STATE_DIE)
+		{
+			if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+		}
+	}
+}
+
+void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
+{
+	CPlantFireBall* fireball = (CPlantFireBall*)e->obj;
+	if (untouchable == 0)
+	{
+		if (level > MARIO_LEVEL_SMALL)
+		{
+			level = MARIO_LEVEL_SMALL;
+			StartUntouchable();
+		}
+		else
+		{				
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
 		}
 	}
 }
