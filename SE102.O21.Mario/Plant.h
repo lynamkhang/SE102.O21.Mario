@@ -14,6 +14,8 @@
 #define PLANT_STATE_DOWN 1
 #define PLANT_STATE_DIE 2
 
+#define MARIO_PROXIMITY_THRESHOLD 30.0f
+
 #define ID_ANI_PLANT_DOWN_LEFT 850
 #define ID_ANI_PLANT_DOWN_LEFT_STILL 851
 #define ID_ANI_PLANT_UP_LEFT 852
@@ -30,7 +32,10 @@ protected:
 		
 	float baseY;
 	float maxY;
+	float marioX, marioY;
 	bool climax;
+	bool isUnderPipe;
+
 
 	ULONGLONG die_start;
 	ULONGLONG rise_start;
@@ -47,6 +52,7 @@ protected:
 
 public:
 	CPlant(float x, float y);
+	void GetMarioPosition();
 	virtual void SetState(int state);
 
 };

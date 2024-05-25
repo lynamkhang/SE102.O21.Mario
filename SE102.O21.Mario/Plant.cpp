@@ -29,11 +29,24 @@ void CPlant::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+
+	GetMarioPosition();
+
+	// Check if mario is near
+	bool marioIsNear = abs(marioX - this->x) < MARIO_PROXIMITY_THRESHOLD && abs(marioY - this->y) < MARIO_PROXIMITY_THRESHOLD;
+
+	// if mario is near and plant is under pipe don't rise up
+	if (marioIsNear && isUnderPipe)
+	{
+		SetState(PLANT_STATE_DOWN);
+	}
+
 	y += vy * dt;
 	if (state == PLANT_STATE_DOWN) {
 		if (y >= baseY) {
 			y = baseY;
 			vy = 0;
+			isUnderPipe = true;
 			if (GetTickCount64() - rise_start >= 3000) {
 				SetState(PLANT_STATE_UP);
 			}
@@ -44,6 +57,7 @@ void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (y <= baseY - PLANT_BBOX_HEIGHT) {
 			y = baseY - PLANT_BBOX_HEIGHT;
 			vy = 0;
+			isUnderPipe = false;
 			if (GetTickCount64() - rise_start >= 3000) {
 				SetState(PLANT_STATE_DOWN);
 			}
@@ -70,15 +84,9 @@ void CPlant::Render()
 	float scrw = float(game->GetBackBufferWidth());
 	game->GetCamPos(camX, camY);
 
-	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
+	GetMarioPosition();
 
-	if (!mario) return;
-	
-	float marioX, marioY;
-	mario->GetPosition(marioX, marioY);
-
-	if (x > camX + scrw)		//if out of camera don't render
+	if (x > camX + scrw)		// if out of camera don't render
 		return;
 
 	int aniId = ID_ANI_PLANT_DOWN_LEFT;
@@ -148,6 +156,13 @@ void CPlant::SetState(int state)
 			die_start = GetTickCount64();
 			break;
 	}
+}
+
+void CPlant::GetMarioPosition() {
+	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
+
+	mario->GetPosition(marioX, marioY);
 }
 
 
