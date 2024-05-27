@@ -12,10 +12,20 @@ CKoopas::CKoopas(float x, float y) : CGameObject(x, y)
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x - KOOPA_BBOX_WIDTH/2;
-	top = y - KOOPA_BBOX_HEIGHT/2;
-	right = left + KOOPA_BBOX_WIDTH;
-	bottom = top + KOOPA_BBOX_HEIGHT;
+	if (!isInShell && !isKicked)
+	{
+		left = x - KOOPA_BBOX_WIDTH / 2;
+		top = y - KOOPA_BBOX_HEIGHT / 2;
+		right = left + KOOPA_BBOX_WIDTH;
+		bottom = top + KOOPA_BBOX_HEIGHT;
+	}
+	else
+	{
+		left = x - KOOPA_INSHELL_BBOX_WIDTH / 2;
+		top = y - KOOPA_INSHELL_BBOX_HEIGHT / 2;
+		right = left + KOOPA_INSHELL_BBOX_WIDTH;
+		bottom = top + KOOPA_INSHELL_BBOX_HEIGHT;
+	}
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -51,23 +61,23 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 void CKoopas::Render()
 {
 	int aniId = ID_ANI_KOOPA_WALKING_LEFT;
-	if (state == KOOPA_STATE_INSHELL_IDLE)
+	if (isInShell && !isKicked)
 	{
 		aniId = ID_ANI_KOOPA_INSHELL_IDLE;
 	}
-	else if (state == KOOPA_STATE_INSHELL_KICK)
+	else if (isInShell && isKicked)
 	{
 		aniId = ID_ANI_KOOPA_INSHELL_KICK;
 	}
 	else if (state == KOOPA_STATE_DIE)
 	{
-		aniId = ID_ANI_KOOPA_DIE;
+		aniId = ID_ANI_KOOPA_DIE;	
 	}
-	else if (vx > 0)
+	else if (vx > 0 && !isInShell)
 	{
 		aniId = ID_ANI_KOOPA_WALKING_RIGHT;
 	}
-	else if (vx <= 0)
+	else if (vx <= 0 && !isInShell)
 	{
 		aniId = ID_ANI_KOOPA_WALKING_LEFT;
 	}
@@ -92,9 +102,13 @@ void CKoopas::SetState(int state)
 			break;
 		case KOOPA_STATE_INSHELL_IDLE:
 			vx = 0;
+			isInShell = true;
+			isKicked = false;
 			break;
 		case KOOPA_STATE_INSHELL_KICK:
 			vx = -KOOPA_INSHELL_SPEED;
+			isInShell = true;
+			isKicked = true;
 			break;
 		case KOOPA_STATE_DIE:
 			die_start = GetTickCount64();

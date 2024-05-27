@@ -11,6 +11,7 @@
 #include "QBlock.h"
 #include "Plant.h"
 #include "PlantFireBall.h"
+#include "Koopas.h"
 
 #include "Collision.h"
 
@@ -66,6 +67,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPlant(e);
 	else if (dynamic_cast<CPlantFireBall*>(e->obj))
 		OnCollisionWithPlantFireBall(e);
+	else if (dynamic_cast<CKoopas*>(e->obj))
+		OnCollisionWithKoopas(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -180,6 +183,47 @@ void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
 			}
 		}
 	}	
+}
+
+void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
+{
+	CKoopas* koopas = (CKoopas*)e->obj;
+
+	// jump on top >> kill Goomba and deflect a bit 
+	if (e->ny < 0)
+	{
+		if (koopas->GetState() != KOOPA_STATE_DIE)
+		{
+			koopas->SetState(KOOPA_STATE_INSHELL_IDLE);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+	}
+	else if (e->nx < 0 || e->nx > 0)
+	{
+		if (koopas->GetState() != KOOPA_STATE_DIE)
+		{
+			koopas->SetState(KOOPA_STATE_INSHELL_KICK);
+		}
+	}
+	else // hit by Goomba
+	{
+		if (untouchable == 0)
+		{
+			if (koopas->GetState() != KOOPA_STATE_DIE)
+			{
+				if (level > MARIO_LEVEL_SMALL)
+				{
+					level = MARIO_LEVEL_SMALL;
+					StartUntouchable();
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+		}
+	}
 }
 
 //
