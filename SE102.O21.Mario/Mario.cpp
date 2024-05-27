@@ -139,9 +139,34 @@ void CMario::OnCollisionWithQBlock(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 {
 	CPlant* plant = (CPlant*)e->obj;
-	if (untouchable == 0)
+	if (plant->GetState() == PLANT_STATE_UP)
 	{
-		if (plant->GetState() != PLANT_STATE_DIE)
+		if (untouchable == 0)
+		{
+			if (plant->GetState() != PLANT_STATE_DIE)
+			{
+				if (level > MARIO_LEVEL_SMALL)
+				{
+					level = MARIO_LEVEL_SMALL;
+					StartUntouchable();
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+		}
+	}
+}
+
+void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
+{
+	CPlantFireBall* fireball = (CPlantFireBall*)e->obj;
+
+	if (fireball)
+	{
+		if (untouchable == 0)
 		{
 			if (level > MARIO_LEVEL_SMALL)
 			{
@@ -154,25 +179,7 @@ void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 				SetState(MARIO_STATE_DIE);
 			}
 		}
-	}
-}
-
-void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
-{
-	CPlantFireBall* fireball = (CPlantFireBall*)e->obj;
-	if (untouchable == 0)
-	{
-		if (level > MARIO_LEVEL_SMALL)
-		{
-			level = MARIO_LEVEL_SMALL;
-			StartUntouchable();
-		}
-		else
-		{				
-			DebugOut(L">>> Mario DIE >>> \n");
-			SetState(MARIO_STATE_DIE);
-		}
-	}
+	}	
 }
 
 //
@@ -312,7 +319,7 @@ void CMario::Render()
 
 	animations->Get(aniId)->Render(x, y);
 
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	
 	DebugOutTitle(L"Coins: %d", coin);
 }

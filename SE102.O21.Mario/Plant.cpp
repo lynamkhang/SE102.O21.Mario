@@ -9,8 +9,8 @@ CPlant::CPlant(float x, float y) : CGameObject(x, y)
 
 void CPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
+	left = x - FIREBALL_BBOX_WIDTH/2;
+	top = y - FIREBALL_BBOX_HEIGHT/2;
 	right = left + PLANT_BBOX_WIDTH;
 	bottom = top + PLANT_BBOX_HEIGHT;
 }
@@ -47,7 +47,7 @@ void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			y = baseY;
 			vy = 0;
 			isUnderPipe = true;
-			if (GetTickCount64() - rise_start >= 3000) {
+			if (GetTickCount64() - rise_start >= 2500) {
 				SetState(PLANT_STATE_UP);
 			}
 		}
@@ -58,7 +58,7 @@ void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			y = baseY - PLANT_BBOX_HEIGHT;
 			vy = 0;
 			isUnderPipe = false;
-			if (GetTickCount64() - rise_start >= 3000) {
+			if (GetTickCount64() - rise_start >= 2500) {
 				SetState(PLANT_STATE_DOWN);
 				ShootFireBall();
 			}
@@ -86,6 +86,7 @@ void CPlant::Render()
 	game->GetCamPos(camX, camY);
 
 	GetMarioPosition();
+
 
 	if (x > camX + scrw)		// if out of camera don't render
 		return;
@@ -164,10 +165,24 @@ void CPlant::GetMarioPosition() {
 	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
 
 	mario->GetPosition(marioX, marioY);
+
+	if (!mario)
+		return;
 }
 
 void CPlant::ShootFireBall()
 {
-	CPlantFireBall* fireball = new CPlantFireBall(this->x, this->y);
-	((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(fireball);
+	// Calculate the distance to Mario
+	float dx = marioX - this->x;
+	float dy = marioY - this->y;
+	float distance = sqrt(dx * dx + dy * dy);
+
+	// Check if Mario is within shooting range
+	if (distance <= PLANT_SHOOTING_RANGE)
+	{
+		// Create a new fireball
+		CPlantFireBall* fireball = new CPlantFireBall(this->x + PLANT_BBOX_WIDTH/3, this->y);
+		CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+		currentScene->AddObject(fireball);
+	}
 }

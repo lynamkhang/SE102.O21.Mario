@@ -11,6 +11,7 @@ environment.txt
 goomba.txt
 plant.txt
 plantfireball.txt
+koopas.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type

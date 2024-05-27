@@ -309,8 +309,10 @@ void CPlayScene::Render()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		if (dynamic_cast<CQBlock*>(objects[i]))
-			continue; // Skip question blocks for now
+			continue;
 		if (dynamic_cast<CPipe*>(objects[i]))
+			continue;
+		if (dynamic_cast<CPlantFireBall*>(objects[i]))
 			continue;
 		if (objects[i] != player)
 			objects[i]->Render();
@@ -319,6 +321,8 @@ void CPlayScene::Render()
 	// Then, render all question blocks and pipe
 	for (int i = 0; i < objects.size(); i++)
 	{
+		if (dynamic_cast<CPlantFireBall*>(objects[i]))
+			objects[i]->Render();
 		if (dynamic_cast<CQBlock*>(objects[i]))
 			objects[i]->Render();
 		if (dynamic_cast<CPipe*>(objects[i]))
