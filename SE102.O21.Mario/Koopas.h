@@ -11,7 +11,7 @@
 
 
 #define KOOPA_BBOX_WIDTH 16
-#define	KOOPA_BBOX_HEIGHT 17
+#define	KOOPA_BBOX_HEIGHT 24
 #define KOOPA_INSHELL_BBOX_WIDTH 17
 #define KOOPA_INSHELL_BBOX_HEIGHT 17
 #define KOOPA_BBOX_HEIGHT_DIE 16
@@ -35,7 +35,7 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
-	bool isInShell;
+	bool isInShell, isKicked;
 
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

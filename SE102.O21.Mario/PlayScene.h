@@ -14,7 +14,7 @@
 #include "Environment.h"
 #include "Plant.h"
 #include "PlantFireBall.h"
-//#include "Koopas.h"
+#include "Koopas.h"
 
 
 class CPlayScene: public CScene

@@ -231,6 +231,8 @@ koopas.txt
 #GOOMBA
 2	224	164
 2	400	164
+#KOOPAS
+12	608	116
 
 
 #PLANT

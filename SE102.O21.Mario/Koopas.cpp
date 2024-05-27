@@ -6,15 +6,16 @@ CKoopas::CKoopas(float x, float y) : CGameObject(x, y)
 	this->ay = KOOPA_GRAVITY;
 	die_start = -1;
 	isInShell = false;
-	SetState(GOOMBA_STATE_WALKING);
+	isKicked = false;
+	SetState(KOOPA_STATE_WALKING_LEFT);
 }
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
-	right = x + KOOPA_BBOX_WIDTH;
-	bottom = y + KOOPA_BBOX_HEIGHT;
+	left = x - KOOPA_BBOX_WIDTH/2;
+	top = y - KOOPA_BBOX_HEIGHT/2;
+	right = left + KOOPA_BBOX_WIDTH;
+	bottom = top + KOOPA_BBOX_HEIGHT;
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -62,9 +63,13 @@ void CKoopas::Render()
 	{
 		aniId = ID_ANI_KOOPA_DIE;
 	}
-	else if (state == KOOPA_STATE_WALKING_RIGHT)
+	else if (vx > 0)
 	{
 		aniId = ID_ANI_KOOPA_WALKING_RIGHT;
+	}
+	else if (vx <= 0)
+	{
+		aniId = ID_ANI_KOOPA_WALKING_LEFT;
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -76,10 +81,14 @@ void CKoopas::SetState(int state)
 	switch (state)
 	{
 		case KOOPA_STATE_WALKING_LEFT:
-			vx = -KOOPA_WALKING_SPEED;
+			nx = -1;
+			vx = KOOPA_WALKING_SPEED * nx;
+			isInShell = false;
+			isKicked = false;
 			break;
 		case KOOPA_STATE_WALKING_RIGHT:
-			vx = KOOPA_WALKING_SPEED;
+			nx = 1;
+			vx = KOOPA_WALKING_SPEED * nx;
 			break;
 		case KOOPA_STATE_INSHELL_IDLE:
 			vx = 0;
