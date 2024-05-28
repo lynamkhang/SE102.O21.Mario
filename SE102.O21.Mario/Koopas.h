@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Mario.h"
 #include "Goomba.h"
+#include "Collision.h"
 #include "Plant.h"
 
 #define KOOPA_GRAVITY 0.002f
@@ -18,8 +19,9 @@
 #define KOOPA_STATE_WALKING_LEFT 0
 #define KOOPA_STATE_WALKING_RIGHT 1
 #define KOOPA_STATE_INSHELL_IDLE 2
-#define KOOPA_STATE_INSHELL_KICK 3
-#define KOOPA_STATE_DIE 4
+#define KOOPA_STATE_INSHELL_KICK_LEFT 3
+#define KOOPA_STATE_INSHELL_KICK_RIGHT 4
+#define KOOPA_STATE_DIE 5
 
 #define ID_ANI_KOOPA_WALKING_LEFT 750
 #define ID_ANI_KOOPA_WALKING_RIGHT 751
@@ -34,7 +36,7 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
-	bool isInShell, isKicked;
+	
 
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
@@ -46,8 +48,12 @@ protected:
 	virtual void OnNoCollision(DWORD dt);
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+	bool IsOnPlatform(vector<LPGAMEOBJECT>* coObjects);
 
 public:
+	bool isInShell, isKicked;
+
 	CKoopas(float x, float y);
 	virtual void SetState(int state);
+	float GetX() { return x; };
 };

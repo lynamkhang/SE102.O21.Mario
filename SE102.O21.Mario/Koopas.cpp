@@ -32,6 +32,13 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
+	
+	if (!isInShell) {
+		if (!IsOnPlatform(coObjects))
+		{
+			vx = -vx;
+		}
+	}
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -105,13 +112,44 @@ void CKoopas::SetState(int state)
 			isInShell = true;
 			isKicked = false;
 			break;
-		case KOOPA_STATE_INSHELL_KICK:
-			vx = -KOOPA_INSHELL_SPEED;
+		case KOOPA_STATE_INSHELL_KICK_LEFT:
+			vx = KOOPA_INSHELL_SPEED;
 			isInShell = true;
 			isKicked = true;
 			break;
+		case KOOPA_STATE_INSHELL_KICK_RIGHT:
+			vx = KOOPA_INSHELL_SPEED;
+			isInShell = true;
+			isKicked = true;
 		case KOOPA_STATE_DIE:
 			die_start = GetTickCount64();
 			break;
 	}
+}
+
+bool CKoopas::IsOnPlatform(vector<LPGAMEOBJECT>* coObjects)
+{
+	// Check if there's a platform ahead of Koopa
+	float l, t, r, b;
+	GetBoundingBox(l, t, r, b);
+
+	// Adjust the checking position based on Koopa's direction
+	float check_x = (vx > 0) ? r : l;
+	float check_y = b + 1; // Slightly below Koopa's feet
+
+	// Check if there's a blocking object at the checking position
+	for (size_t i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT obj = coObjects->at(i);
+		if (obj->IsBlocking())
+		{
+			float oL, oT, oR , oB;
+			obj->GetBoundingBox(oL, oT, oR , oB);
+			if (check_x >= oL && check_x <= oR && check_y >= oT && check_y <= oB)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
