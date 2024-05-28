@@ -36,6 +36,7 @@ void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
 	else if (e->nx != 0)
 	{
 		vx = -vx;
+		nx = -nx; // Change direction
 	}
 }
 

@@ -33,6 +33,7 @@
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
 
+#define MARIO_STATE_KICK			700
 
 #pragma region ANIMATION_ID
 
@@ -51,11 +52,14 @@
 #define ID_ANI_MARIO_JUMP_RUN_RIGHT 810
 #define ID_ANI_MARIO_JUMP_RUN_LEFT 811
 
-#define ID_ANI_MARIO_SIT_RIGHT 900
-#define ID_ANI_MARIO_SIT_LEFT 901
+#define ID_ANI_MARIO_SIT_RIGHT 920
+#define ID_ANI_MARIO_SIT_LEFT 921
 
 #define ID_ANI_MARIO_BRACE_RIGHT 1000
 #define ID_ANI_MARIO_BRACE_LEFT 1001
+
+#define ID_ANI_MARIO_KICK_RIGHT	1002
+#define ID_ANI_MARIO_KICK_LEFT 1003
 
 #define ID_ANI_MARIO_DIE 999
 
@@ -77,6 +81,9 @@
 
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT 1600
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_LEFT 1601
+
+#define ID_ANI_MARIO_SMALL_KICK_RIGHT	1700
+#define ID_ANI_MARIO_SMALL_KICK_LEFT	1701
 
 #pragma endregion
 
@@ -110,8 +117,9 @@ class CMario : public CGameObject
 
 	int level; 
 	int untouchable; 
-	ULONGLONG untouchable_start;
+	ULONGLONG untouchable_start;;
 	BOOLEAN isOnPlatform;
+	bool isVisible;
 	int coin; 
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
@@ -127,9 +135,13 @@ class CMario : public CGameObject
 	int GetAniIdSmall();
 
 public:
+	ULONGLONG attack_time;
+	bool pressA, isHolding, isKicking;
+
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		isSitting = false;
+		isKicking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
@@ -137,7 +149,9 @@ public:
 		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
+		attack_time = 0;
 		isOnPlatform = false;
+		isVisible = true;
 		coin = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -149,7 +163,7 @@ public:
 		return (state != MARIO_STATE_DIE); 
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
+	int IsBlocking() { return 0; }
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
@@ -159,5 +173,6 @@ public:
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetDirection() { return nx; };
+	int GetLevel() { return level; };
 	void SetCoin() { coin++; };
 };

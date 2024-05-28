@@ -27,9 +27,31 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+		isVisible = true;
+	}
+
+	if (untouchable)
+	{
+		if (GetTickCount64() % 100 < 50) // Blink every 100 milliseconds
+		{
+			isVisible = !isVisible;
+		}
+		else
+		{
+			isVisible = true;
+		}
 	}
 
 	isOnPlatform = false;
+
+	if (isKicking == true)
+	{
+		if (attack_time != 0 && GetTickCount64() - attack_time > 100)
+		{
+			isKicking = false;
+			attack_time = 0;
+		}
+	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -304,6 +326,13 @@ int CMario::GetAniIdSmall()
 				if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
 			}
+			else if (isKicking)
+			{
+				if (nx > 0)
+					aniId = ID_ANI_MARIO_SMALL_KICK_RIGHT;
+				else
+					aniId = ID_ANI_MARIO_SMALL_KICK_LEFT;
+			}
 			else if (vx > 0)
 			{
 				if (ax < 0)
@@ -360,6 +389,13 @@ int CMario::GetAniIdBig()
 			else
 				aniId = ID_ANI_MARIO_SIT_LEFT;
 		}
+		else if (isKicking)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_KICK_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_KICK_LEFT;
+		}
 		else
 			if (vx == 0)
 			{
@@ -392,6 +428,9 @@ int CMario::GetAniIdBig()
 
 void CMario::Render()
 {
+	if (untouchable && !isVisible)
+		return;
+
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
 
@@ -473,7 +512,6 @@ void CMario::SetState(int state)
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
-
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;

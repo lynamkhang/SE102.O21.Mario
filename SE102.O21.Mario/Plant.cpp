@@ -161,8 +161,8 @@ void CPlant::SetState(int state)
 }
 
 void CPlant::GetMarioPosition() {
-	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	mario->GetPosition(marioX, marioY);
 

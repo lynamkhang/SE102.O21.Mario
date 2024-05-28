@@ -7,6 +7,7 @@ CKoopas::CKoopas(float x, float y) : CGameObject(x, y)
 	die_start = -1;
 	isInShell = false;
 	isKicked = false;
+	isHold = false;
 	SetState(KOOPA_STATE_WALKING_LEFT);
 }
 
@@ -30,6 +31,11 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	float marioX, marioY;
+	mario->GetPosition(marioX, marioY);
+
 	vy += ay * dt;
 	vx += ax * dt;
 	
@@ -37,6 +43,52 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (!IsOnPlatform(coObjects))
 		{
 			vx = -vx;
+		}
+	}
+
+	if (isHold)
+	{
+		if (mario->pressA == false)
+		{
+			this->isHold = false;
+			this->isKicked = true;
+			mario->isKicking = true;
+			mario->attack_time = GetTickCount64();
+		}
+		if (mario->GetDirection() == 1)
+		{
+			if (isInShell == true)
+				SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
+		}
+		else
+		{
+			if (isInShell == true)
+				SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
+		}
+		return;
+	}
+	else
+	{
+		vy = 0;
+		if (mario->GetDirection() == 1)
+		{
+			if (isInShell == true)
+			{
+				if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+				{
+					this->x = float(marioX + MARIO_SMALL_BBOX_WIDTH + 1);
+					this->y = marioY - 2;
+				}
+				else
+				{
+					this->x = float(marioX + MARIO_BIG_BBOX_WIDTH - 1.0f);
+					this->y = marioY + 6;
+				}
+			}
+		}
+		else
+		{
+
 		}
 	}
 
@@ -53,7 +105,6 @@ void CKoopas::OnNoCollision(DWORD dt)
 void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CGoomba*>(e->obj)) return;
 
 	if (e->ny != 0)
 	{
@@ -62,6 +113,15 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 	else if (e->nx != 0)
 	{
 		vx = -vx;
+	}
+	if (isKicked)
+	{
+		if (dynamic_cast<CGoomba*>(e->obj))
+			OnCollisionWithGoomba(e);
+		else if (dynamic_cast<CPlant*>(e->obj))
+			OnCollisionWithPlant(e);
+		else if (dynamic_cast<CQBlock*>(e->obj))
+			OnCollisionWithQBlock(e);
 	}
 }
 
@@ -102,25 +162,37 @@ void CKoopas::SetState(int state)
 			vx = KOOPA_WALKING_SPEED * nx;
 			isInShell = false;
 			isKicked = false;
+			isHold = false;
 			break;
 		case KOOPA_STATE_WALKING_RIGHT:
 			nx = 1;
 			vx = KOOPA_WALKING_SPEED * nx;
+			isInShell = false;
+			isKicked = false;
+			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_IDLE:
 			vx = 0;
 			isInShell = true;
 			isKicked = false;
+			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_KICK_LEFT:
-			vx = KOOPA_INSHELL_SPEED;
+			vx = -KOOPA_INSHELL_SPEED;
 			isInShell = true;
 			isKicked = true;
+			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_KICK_RIGHT:
 			vx = KOOPA_INSHELL_SPEED;
 			isInShell = true;
 			isKicked = true;
+			isHold = false;
+		case KOOPA_STATE_INSHELL_HOLD:
+			vx = 0;
+			isInShell = true;
+			isKicked = true;
+			isHold = true;
 		case KOOPA_STATE_DIE:
 			die_start = GetTickCount64();
 			break;
@@ -152,4 +224,34 @@ bool CKoopas::IsOnPlatform(vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 	return false;
+}
+
+void CKoopas::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
+{
+	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+
+	if (goomba->GetState() != GOOMBA_STATE_DIE)
+	{
+		goomba->SetState(GOOMBA_STATE_DIE);
+	}
+}
+
+void CKoopas::OnCollisionWithPlant(LPCOLLISIONEVENT e)
+{
+	CPlant* plant = dynamic_cast<CPlant*>(e->obj);
+
+	if (plant->GetState() != PLANT_STATE_DIE)
+	{
+		plant->SetState(PLANT_STATE_DIE);
+	}
+}
+
+void CKoopas::OnCollisionWithQBlock(LPCOLLISIONEVENT e)
+{
+	CQBlock* qblock = dynamic_cast<CQBlock*>(e->obj);
+
+	if (qblock->GetState() != QBLOCK_STATE_EMP)
+	{
+		qblock->SetState(QBLOCK_STATE_EMP);
+	}
 }

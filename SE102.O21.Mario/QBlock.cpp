@@ -27,7 +27,6 @@ void CQBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			vy = 0; // Stop moving
 			y = baseY; // Correct position
-			ShowItem();
 			SetState(QBLOCK_STATE_EMP); // Transition to empty state	
 		}
 	}
@@ -83,6 +82,7 @@ void CQBlock::SetState(int state)
 	{
 		case QBLOCK_STATE_EMP:
 		{
+			ShowItem();
 			vy = 0;
 			isEmpty = true;
 			break;

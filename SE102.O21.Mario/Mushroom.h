@@ -8,8 +8,8 @@
 #define MUSHROOM_GRAVITY	0.002f
 
 
-#define MUSHROOM_BBOX_WIDTH 16
-#define MUSHROOM_BBOX_HEIGHT 16
+#define MUSHROOM_BBOX_WIDTH 14
+#define MUSHROOM_BBOX_HEIGHT 14
 
 
 #define MUSHROOM_STATE_MOVING 0
@@ -22,8 +22,8 @@
 class CMushroom : public CGameObject
 {
 protected:
-	CPlayScene* currentScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-	CMario* mario = dynamic_cast<CMario*>(currentScene->GetPlayer());
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	float ax;
 	float ay;
 	int nx;
