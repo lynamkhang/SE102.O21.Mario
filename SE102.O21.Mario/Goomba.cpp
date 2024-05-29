@@ -49,6 +49,19 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	CGame* game = CGame::GetInstance();
+	float camx;
+	float camy;
+	float scrw = float(game->GetBackBufferWidth());
+	float scrh = float(game->GetBackBufferHeight());
+	game->GetCamPos(camx, camy);
+
+	// Check if the Goomba is within the camera's view
+	if (x < camx || x > camx + scrw || y < camy || y > camy + scrh)
+	{
+		return;
+	}
+
 	vy += ay * dt;
 	vx += ax * dt;
 

@@ -42,10 +42,10 @@ void CFlyGoomba::GetBoundingBox(float& left, float& top, float& right, float& bo
 	}
 	else
 	{
-		left = x - FLYGOOMBA_BBOX_WIDTH / 2;
-		top = y - FLYGOOMBA_BBOX_HEIGHT / 2;
-		right = left + FLYGOOMBA_BBOX_WIDTH;
-		bottom = top + FLYGOOMBA_BBOX_HEIGHT;
+		left = x - GOOMBA_BBOX_WIDTH / 2;
+		top = y - GOOMBA_BBOX_HEIGHT / 2;
+		right = left + GOOMBA_BBOX_WIDTH;
+		bottom = top + GOOMBA_BBOX_HEIGHT;
 	}
 }
 
@@ -77,6 +77,19 @@ void CFlyGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CFlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CGame* game = CGame::GetInstance();
+	float camx;
+	float camy;
+	float scrw = float(game->GetBackBufferWidth());
+	float scrh = float(game->GetBackBufferHeight());
+	game->GetCamPos(camx, camy);
+
+	// Check if the Goomba is within the camera's view
+	if (x < camx || x > camx + scrw || y < camy || y > camy + scrh)
+	{
+		return;
+	}
+
 	if (isFly)
 	{
 		float cx, cy;
@@ -129,6 +142,9 @@ void CFlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CFlyGoomba::Render()
 {
+	if (isFinish)
+		return;
+
 	int aniId = ID_ANI_FLYGOOMBA_WALKING;
 	if (isFly)
 	{
@@ -151,6 +167,7 @@ void CFlyGoomba::SetState(int state)
 		vy = -FLY_SPEED;
 		break;
 	case FLYGOOMBA_STATE_DIE:
+		isFinish = 1;
 		die_start = GetTickCount64();
 		y += (FLYGOOMBA_BBOX_HEIGHT - FLYGOOMBA_BBOX_HEIGHT_DIE) / 2;
 		vx = 0;

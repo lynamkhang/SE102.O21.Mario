@@ -299,13 +299,15 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithFlyGoomba(LPCOLLISIONEVENT e)
 {
 	CFlyGoomba* flyGoomba = dynamic_cast<CFlyGoomba*>(e->obj);
+	float flyGoombaX, flyGoombaY;
+	flyGoomba->GetPosition(flyGoombaX, flyGoombaY);
 	if (e->ny < 0)
 	{
 		if (flyGoomba->GetState() != FLYGOOMBA_STATE_DIE)
 		{
 			if (flyGoomba->GetIsFly())
 			{
-				flyGoomba->y = flyGoomba->y - 1;
+				flyGoomba->SetY(flyGoombaY - 1);
 				flyGoomba->SetIsFly(false);
 			}
 			else
