@@ -1,11 +1,17 @@
 #include "FlyGoomba.h"
+#include "Goomba.h"
+#include "Mario.h"
+#include "PlayScene.h"
+#include "Game.h"
 
-CFlyGoomba::CFlyGoomba(float x, float y) : CGameObject(x, y)
+CFlyGoomba::CFlyGoomba(float x, float y) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = FLYGOOMBA_GRAVITY;
 	die_start = -1;
-	SetState(FLYGOOMBA_STATE_FLYING);
+	isOnPlatform = true;
+	isFly = true;
+	vx = FLYGOOMBA_WALKING_SPEED;
 }
 
 void CFlyGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -17,12 +23,22 @@ void CFlyGoomba::GetBoundingBox(float& left, float& top, float& right, float& bo
 		right = left + FLYGOOMBA_BBOX_WIDTH;
 		bottom = top + FLYGOOMBA_BBOX_HEIGHT_DIE;
 	}
-	else if (state == FLYGOOMBA_STATE_WALKING)
+	else if (isFly)
 	{
-		left = x - GOOMBA_BBOX_WIDTH / 2;
-		top = y - GOOMBA_BBOX_HEIGHT / 2;
-		right = left + GOOMBA_BBOX_WIDTH;
-		bottom = top + GOOMBA_BBOX_HEIGHT;
+		if (isOnPlatform)
+		{
+			left = x - FLYGOOMBA_BBOX_WIDTH / 2;
+			top = y - FLYGOOMBA_BBOX_HEIGHT / 2;
+			right = left + FLYGOOMBA_BBOX_WIDTH;
+			bottom = top + FLYGOOMBA_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x - FLYGOOMBA_BBOX_WIDTH / 2;
+			top = y - FLYGOOMBA_FLY_BBOX_HEIGHT / 2;
+			right = left + FLYGOOMBA_BBOX_WIDTH;
+			bottom = top + FLYGOOMBA_FLY_BBOX_HEIGHT;
+		}
 	}
 	else
 	{
@@ -37,16 +53,21 @@ void CFlyGoomba::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
-}
+};
 
 void CFlyGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CFlyGoomba*>(e->obj)) return;
-
+	if (dynamic_cast<CGoomba*>(e->obj)) return;
 	if (e->ny != 0)
 	{
 		vy = 0;
+		if (e->ny < 0)
+		{
+			isOnPlatform = true;
+			vy = 0;
+		}
 	}
 	else if (e->nx != 0)
 	{
@@ -56,33 +77,67 @@ void CFlyGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CFlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vy += ay * dt;
+	if (isFly)
+	{
+		float cx, cy;
+		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		mario->GetPosition(cx, cy);
+		if (abs(cx - x) < DISTANCE_TO_FOLLOW)
+		{
+			if (cx > x)
+			{
+				vx = FLYGOOMBA_WALKING_SPEED;
+			}
+			else
+			{
+				vx = -FLYGOOMBA_WALKING_SPEED;
+			}
+		}
+		if (isOnPlatform)
+		{
+			if (GetTickCount64() - walk_start > WALK_TIME)
+			{
+				SetState(FLYGOOMBA_STATE_FLY);
+				isOnPlatform = false;
+			}
+			else
+			{
+				vy += ay * dt;
+			}
+		}
+		else
+		{
+			StartWalk();
+			vy += ay * dt;
+		}
+	}
+	else
+	{
+		vy += ay * dt;
+	}
 	vx += ax * dt;
 
-	if ((state == FLYGOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
+	if ((state == FLYGOOMBA_STATE_DIE) && (GetTickCount64() - die_start > FLYGOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
 	}
-
-
-
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
+
 void CFlyGoomba::Render()
 {
 	int aniId = ID_ANI_FLYGOOMBA_WALKING;
-	if (state == FLYGOOMBA_STATE_DIE)
+	if (isFly)
+	{
+		aniId = isOnPlatform ? ID_ANI_FLYGOOMBA_FLY_WALKING : ID_ANI_FLYGOOMBA_FLY;
+	}
+	else if (state == FLYGOOMBA_STATE_DIE)
 	{
 		aniId = ID_ANI_FLYGOOMBA_DIE;
 	}
-	else if (state == FLYGOOMBA_STATE_FLYING)
-	{
-		aniId = ID_ANI_FLYGOOMBA_FLYING;
-	}
-
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }
@@ -92,6 +147,9 @@ void CFlyGoomba::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
+	case FLYGOOMBA_STATE_FLY:
+		vy = -FLY_SPEED;
+		break;
 	case FLYGOOMBA_STATE_DIE:
 		die_start = GetTickCount64();
 		y += (FLYGOOMBA_BBOX_HEIGHT - FLYGOOMBA_BBOX_HEIGHT_DIE) / 2;
@@ -99,13 +157,5 @@ void CFlyGoomba::SetState(int state)
 		vy = 0;
 		ay = 0;
 		break;
-	case FLYGOOMBA_STATE_WALKING:
-		vx = -FLYGOOMBA_WALKING_SPEED;
-		y -= (FLYGOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT) / 2;
-		break;
-	case FLYGOOMBA_STATE_FLYING:
-		vx = -FLYGOOMBA_WALKING_SPEED;
-		break;
 	}
 }
-

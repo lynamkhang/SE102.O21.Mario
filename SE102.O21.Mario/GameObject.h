@@ -16,7 +16,7 @@ using namespace std;
 
 class CGameObject
 {
-protected:
+public:
 
 	float x; 
 	float y;
