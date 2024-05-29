@@ -12,6 +12,7 @@ goomba.txt
 plant.txt
 plantfireball.txt
 koopas.txt
+flygoomba.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -233,6 +234,9 @@ koopas.txt
 2	400	164
 #KOOPAS
 12	608	116
+#FLYGOOMBA
+13	1072	132
+
 
 
 #PLANT

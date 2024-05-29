@@ -38,7 +38,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	vy += ay * dt;
 	vx += ax * dt;
-	
+
 	if (!isInShell) {
 		if (!IsOnPlatform(coObjects))
 		{
@@ -46,50 +46,21 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
+	if (mario->isHolding && this->isHold)
+	{
+		if (mario->GetDirection() > 0) // Mario is facing right
+		{
+			this->SetPosition(x + MARIO_BIG_BBOX_WIDTH, y);
+		}
+		else // Mario is facing left
+		{
+			this->SetPosition(x - KOOPA_BBOX_WIDTH, y);
+		}
+	}
+
 	if (isHold)
 	{
-		if (mario->pressA == false)
-		{
-			this->isHold = false;
-			this->isKicked = true;
-			mario->isKicking = true;
-			mario->attack_time = GetTickCount64();
-		}
-		if (mario->GetDirection() == 1)
-		{
-			if (isInShell == true)
-				SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
-		}
-		else
-		{
-			if (isInShell == true)
-				SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
-		}
-		return;
-	}
-	else
-	{
 		vy = 0;
-		if (mario->GetDirection() == 1)
-		{
-			if (isInShell == true)
-			{
-				if (mario->GetLevel() == MARIO_LEVEL_SMALL)
-				{
-					this->x = float(marioX + MARIO_SMALL_BBOX_WIDTH + 1);
-					this->y = marioY - 2;
-				}
-				else
-				{
-					this->x = float(marioX + MARIO_BIG_BBOX_WIDTH - 1.0f);
-					this->y = marioY + 6;
-				}
-			}
-		}
-		else
-		{
-
-		}
 	}
 
 	CGameObject::Update(dt, coObjects);
@@ -162,37 +133,30 @@ void CKoopas::SetState(int state)
 			vx = KOOPA_WALKING_SPEED * nx;
 			isInShell = false;
 			isKicked = false;
-			isHold = false;
 			break;
 		case KOOPA_STATE_WALKING_RIGHT:
 			nx = 1;
 			vx = KOOPA_WALKING_SPEED * nx;
 			isInShell = false;
 			isKicked = false;
-			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_IDLE:
 			vx = 0;
 			isInShell = true;
 			isKicked = false;
-			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_KICK_LEFT:
-			vx = -KOOPA_INSHELL_SPEED;
+			nx = -1;
+			vx = KOOPA_INSHELL_SPEED * nx;
 			isInShell = true;
 			isKicked = true;
-			isHold = false;
 			break;
 		case KOOPA_STATE_INSHELL_KICK_RIGHT:
-			vx = KOOPA_INSHELL_SPEED;
+			nx = 1;
+			vx = KOOPA_INSHELL_SPEED * nx;
 			isInShell = true;
 			isKicked = true;
-			isHold = false;
-		case KOOPA_STATE_INSHELL_HOLD:
-			vx = 0;
-			isInShell = true;
-			isKicked = true;
-			isHold = true;
+			break;
 		case KOOPA_STATE_DIE:
 			die_start = GetTickCount64();
 			break;

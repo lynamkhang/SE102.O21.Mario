@@ -12,6 +12,7 @@
 #include "Plant.h"
 #include "PlantFireBall.h"
 #include "Koopas.h"
+#include "FlyGoomba.h"
 
 #include "Collision.h"
 
@@ -44,12 +45,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	isOnPlatform = false;
 
-	if (isKicking == true)
+	if (obj != NULL)
 	{
-		if (attack_time != 0 && GetTickCount64() - attack_time > 100)
+		if (nx > 0)
 		{
-			isKicking = false;
-			attack_time = 0;
+			if (level == MARIO_LEVEL_SMALL)
+			{
+				obj->SetPosition(x + 12, y - 4);
+			}
+			else
+			{
+				obj->SetPosition(x + 12, y + 7);
+			}
 		}
 	}
 
@@ -91,6 +98,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPlantFireBall(e);
 	else if (dynamic_cast<CKoopas*>(e->obj))
 		OnCollisionWithKoopas(e);
+	else if (dynamic_cast<CFlyGoomba*>(e->obj))
+		OnCollisionWithFlyGoomba(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -209,39 +218,38 @@ void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
+	LPGAME game = CGame::GetInstance();
 	CKoopas* koopas = (CKoopas*)e->obj;
 
-	// jump on top >>  Koopa get in shell and deflect a bit 
+	
 	if (e->ny < 0)
 	{
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		if (koopas->isInShell == false)
+		if (koopas->GetState() != KOOPA_STATE_DIE && !koopas->isInShell )
 		{
 			koopas->SetState(KOOPA_STATE_INSHELL_IDLE);
 		}
-		else if (koopas->isInShell == true)
+		else if (koopas->isKicked)
 		{
-			if (koopas->isKicked == false) 
+			koopas->SetState(KOOPA_STATE_INSHELL_IDLE);
+		}
+		else
+		{
+			if (this->nx > 0)
 			{
-				if (this->x > koopas->GetX())
-				{
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
-				}
-				else
-				{
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
-				}
+				koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
 			}
-			else 
+			else
 			{
-				koopas->SetState(KOOPA_STATE_INSHELL_IDLE);
+				koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
 			}
 		}
 	}
-	else if (e->nx != 0)
+	else
 	{
-		if (koopas->isInShell == false && untouchable == 0) {
-			if (koopas->GetState() != KOOPA_STATE_DIE)
+		if (untouchable == 0)
+		{
+			if (!koopas->isInShell || koopas->isKicked)
 			{
 				if (level > MARIO_LEVEL_SMALL)
 				{
@@ -254,40 +262,75 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 					SetState(MARIO_STATE_DIE);
 				}
 			}
-		}
-		else if (koopas->isInShell == true)
-		{
-			if (koopas->isKicked == true && untouchable == 0)
+			if (koopas->isInShell && !koopas->isKicked && !canHold)
 			{
-				if (koopas->GetState() != KOOPA_STATE_DIE)
-				{
-					if (level > MARIO_LEVEL_SMALL)
-					{
-						level = MARIO_LEVEL_SMALL;
-						StartUntouchable();
-					}
-					else
-					{
-						DebugOut(L">>> Mario DIE >>> \n");
-						SetState(MARIO_STATE_DIE);
-					}
-				}
+				if (this->nx > 0)
+					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
+				else
+					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
+
+				isKicking = true;
+			}
+		}
+		else
+		{
+			if (!canHold && koopas->GetState() != KOOPA_STATE_DIE && obj != NULL)
+			{
+				isHolding = false;
+				if (this->nx > 0)
+					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
+				else
+					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
+
+				isKicking = true;
 			}
 			else
 			{
-				if (this->x > koopas->GetX())
-				{
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
-				}
-				else
-				{
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
-				}
+				// Mario picks up the Koopa shell
+				koopas->isHold = true;
+				this->isHolding = true;
+				obj = koopas;
+				return;
 			}
 		}
-		
 	}
 }
+
+void CMario::OnCollisionWithFlyGoomba(LPCOLLISIONEVENT e)
+{
+	CFlyGoomba* goomba = (CFlyGoomba*)e->obj;
+
+	if (e->ny < 0)
+	{
+		if (goomba->GetState() == FLYGOOMBA_STATE_FLYING)
+		{
+			goomba->SetState(FLYGOOMBA_STATE_WALKING);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else if (goomba->GetState() == FLYGOOMBA_STATE_WALKING && goomba->GetState() != FLYGOOMBA_STATE_DIE)
+		{
+			goomba->SetState(FLYGOOMBA_STATE_DIE);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+	}
+	else
+	{
+		if (untouchable == 0)
+		{
+			if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+		}
+	}
+}
+
 
 //
 // Get animation ID for small Mario
@@ -325,13 +368,6 @@ int CMario::GetAniIdSmall()
 			{
 				if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
-			}
-			else if (isKicking)
-			{
-				if (nx > 0)
-					aniId = ID_ANI_MARIO_SMALL_KICK_RIGHT;
-				else
-					aniId = ID_ANI_MARIO_SMALL_KICK_LEFT;
 			}
 			else if (vx > 0)
 			{
@@ -388,13 +424,6 @@ int CMario::GetAniIdBig()
 				aniId = ID_ANI_MARIO_SIT_RIGHT;
 			else
 				aniId = ID_ANI_MARIO_SIT_LEFT;
-		}
-		else if (isKicking)
-		{
-			if (nx > 0)
-				aniId = ID_ANI_MARIO_KICK_RIGHT;
-			else
-				aniId = ID_ANI_MARIO_KICK_LEFT;
 		}
 		else
 			if (vx == 0)

@@ -122,6 +122,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_PLANT: obj = new CPlant(x, y); break;
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(x, y); break;
+	case OBJECT_TYPE_FLYGOOMBA: obj = new CFlyGoomba(x, y); break;
 	case OBJECT_TYPE_ENVIRONMENT:
 	{
 		int aniId = (int)atoi(tokens[3].c_str());

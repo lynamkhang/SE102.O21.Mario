@@ -15,6 +15,7 @@
 #include "Plant.h"
 #include "PlantFireBall.h"
 #include "Koopas.h"
+#include "FlyGoomba.h"
 
 
 class CPlayScene: public CScene

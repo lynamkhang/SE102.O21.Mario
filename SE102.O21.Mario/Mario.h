@@ -130,17 +130,19 @@ class CMario : public CGameObject
 	void OnCollisionWithPlant(LPCOLLISIONEVENT e);
 	void OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopas(LPCOLLISIONEVENT e);
+	void OnCollisionWithFlyGoomba(LPCOLLISIONEVENT e);
 
 	int GetAniIdBig();
 	int GetAniIdSmall();
 
 public:
-	ULONGLONG attack_time;
-	bool pressA, isHolding, isKicking;
+	CGameObject* obj = NULL;
+	bool canHold, isKicking, isHolding;
 
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		isSitting = false;
+		isHolding = false;
 		isKicking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
@@ -149,7 +151,6 @@ public:
 		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
-		attack_time = 0;
 		isOnPlatform = false;
 		isVisible = true;
 		coin = 0;

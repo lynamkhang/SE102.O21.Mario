@@ -11,6 +11,7 @@
 #define KOOPA_GRAVITY 0.002f
 #define KOOPA_WALKING_SPEED 0.025f
 #define KOOPA_INSHELL_SPEED 0.2f
+#define KOOPA_PICKUP_DELAY 500
 
 
 #define KOOPA_BBOX_WIDTH 16
@@ -23,8 +24,7 @@
 #define KOOPA_STATE_INSHELL_IDLE 2
 #define KOOPA_STATE_INSHELL_KICK_LEFT 3
 #define KOOPA_STATE_INSHELL_KICK_RIGHT 4
-#define KOOPA_STATE_INSHELL_HOLD 5
-#define KOOPA_STATE_DIE 6
+#define KOOPA_STATE_DIE 5
 
 #define ID_ANI_KOOPA_WALKING_LEFT 750
 #define ID_ANI_KOOPA_WALKING_RIGHT 751
@@ -42,8 +42,6 @@ protected:
 	ULONGLONG die_start;
 	
 
-
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
@@ -61,7 +59,9 @@ protected:
 public:
 	bool isInShell, isKicked, isHold;
 
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	CKoopas(float x, float y);
 	virtual void SetState(int state);
 	float GetX() { return x; };
+	void SetNx(int nx) { this->nx = nx; };
 };
