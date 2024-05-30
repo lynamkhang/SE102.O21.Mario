@@ -46,6 +46,23 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	{
 	case DIK_A:
 		mario->canHold = false;
+		if (mario->isHolding)
+		{
+			mario->isHolding = false;
+			if (mario->obj != NULL)
+			{
+				mario->obj->isHold = false;
+				if (mario->GetDirection() > 0)
+				{
+					mario->obj->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
+				}
+				else
+				{
+					mario->obj->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
+				}
+				mario->obj = NULL; // Release the reference
+			}
+		}
 		break;
 	case DIK_S:
 		mario->SetState(MARIO_STATE_RELEASE_JUMP);

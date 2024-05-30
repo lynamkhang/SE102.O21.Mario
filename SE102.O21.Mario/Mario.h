@@ -6,6 +6,7 @@
 
 #include "debug.h"
 
+
 #define MARIO_WALKING_SPEED		0.1f
 #define MARIO_RUNNING_SPEED		0.2f
 
@@ -136,7 +137,7 @@ class CMario : public CGameObject
 	int GetAniIdSmall();
 
 public:
-	CGameObject* obj = NULL;
+	CGameObject* obj;
 	bool canHold, isKicking, isHolding;
 
 	CMario(float x, float y) : CGameObject(x, y)

@@ -57,7 +57,7 @@ protected:
 	void OnCollisionWithQBlock(LPCOLLISIONEVENT e);
 
 public:
-	bool isInShell, isKicked, isHold;
+	bool isInShell, isKicked;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	CKoopas(float x, float y);

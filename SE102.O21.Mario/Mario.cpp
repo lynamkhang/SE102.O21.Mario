@@ -45,17 +45,29 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	isOnPlatform = false;
 
-	if (obj != NULL)
+	// Check if Mario is holding a Koopa shell
+	if (isHolding && obj != NULL)
 	{
 		if (nx > 0)
 		{
 			if (level == MARIO_LEVEL_SMALL)
 			{
-				obj->SetPosition(x + 12, y - 4);
+				obj->SetPosition(this->x , this->y - 5);
 			}
 			else
 			{
-				obj->SetPosition(x + 12, y + 7);
+				obj->SetPosition(this->x, this->y - 5);
+			}
+		}
+		else
+		{
+			if (level == MARIO_LEVEL_SMALL)
+			{
+				obj->SetPosition(this->x, this->y - 5);
+			}
+			else
+			{
+				obj->SetPosition(this->x, this->y - 5);
 			}
 		}
 	}
@@ -218,14 +230,12 @@ void CMario::OnCollisionWithPlantFireBall(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
-	LPGAME game = CGame::GetInstance();
 	CKoopas* koopas = (CKoopas*)e->obj;
 
-	
 	if (e->ny < 0)
 	{
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		if (koopas->GetState() != KOOPA_STATE_DIE && !koopas->isInShell )
+		if (koopas->GetState() != KOOPA_STATE_DIE && !koopas->isInShell)
 		{
 			koopas->SetState(KOOPA_STATE_INSHELL_IDLE);
 		}
@@ -262,39 +272,26 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 					SetState(MARIO_STATE_DIE);
 				}
 			}
-			if (koopas->isInShell && !koopas->isKicked && !canHold)
-			{
-				if (this->nx > 0)
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
-				else
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
-
-				isKicking = true;
-			}
-		}
-		else
-		{
-			if (!canHold && koopas->GetState() != KOOPA_STATE_DIE && obj != NULL)
-			{
-				isHolding = false;
-				if (this->nx > 0)
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
-				else
-					koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
-
-				isKicking = true;
-			}
-			else
+			else if (koopas->isInShell && !koopas->isKicked && canHold)
 			{
 				// Mario picks up the Koopa shell
 				koopas->isHold = true;
 				this->isHolding = true;
-				obj = koopas;
-				return;
+				this->obj = koopas;
 			}
+		}
+		else if (koopas->isInShell && !koopas->isKicked && !canHold)
+		{
+			if (this->nx > 0)
+				koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
+			else
+				koopas->SetState(KOOPA_STATE_INSHELL_KICK_LEFT);
+
+			isKicking = true;
 		}
 	}
 }
+
 
 void CMario::OnCollisionWithFlyGoomba(LPCOLLISIONEVENT e)
 {
