@@ -9,8 +9,8 @@ CPlant::CPlant(float x, float y) : CGameObject(x, y)
 
 void CPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x - FIREBALL_BBOX_WIDTH/2;
-	top = y - FIREBALL_BBOX_HEIGHT/2;
+	left = x - PLANT_BBOX_WIDTH/2;
+	top = y - PLANT_BBOX_HEIGHT/2;
 	right = left + PLANT_BBOX_WIDTH;
 	bottom = top + PLANT_BBOX_HEIGHT;
 }
