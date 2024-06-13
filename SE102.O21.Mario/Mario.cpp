@@ -56,7 +56,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else
 			{
-				obj->SetPosition(this->x, this->y - 5);
+				obj->SetPosition(this->x, this->y + 5);
 			}
 		}
 		else
@@ -67,7 +67,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else
 			{
-				obj->SetPosition(this->x, this->y - 5);
+				obj->SetPosition(this->x, this->y + 5);
 			}
 		}
 	}
@@ -276,11 +276,11 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 			{
 				// Mario picks up the Koopa shell
 				koopas->isHold = true;
-				this->isHolding = true;
+				this->SetState(MARIO_STATE_HOLD);
 				this->obj = koopas;
 			}
 		}
-		else if (koopas->isInShell && !koopas->isKicked && !canHold)
+		if (koopas->isInShell && !koopas->isKicked && !canHold)
 		{
 			if (this->nx > 0)
 				koopas->SetState(KOOPA_STATE_INSHELL_KICK_RIGHT);
@@ -421,38 +421,52 @@ int CMario::GetAniIdBig()
 				aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
 		}
 	}
-	else
-		if (isSitting)
+	else if (isSitting)
+	{
+		if (nx > 0)
+			aniId = ID_ANI_MARIO_SIT_RIGHT;
+		else
+			aniId = ID_ANI_MARIO_SIT_LEFT;
+	}
+	else if (vx == 0)
+	{
+		if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+		else aniId = ID_ANI_MARIO_IDLE_LEFT;
+	}
+	else if (vx > 0)
+	{
+		if (ax < 0)
+			aniId = ID_ANI_MARIO_BRACE_RIGHT;
+		else if (ax == MARIO_ACCEL_RUN_X)
+			aniId = ID_ANI_MARIO_RUNNING_RIGHT;
+		else if (ax == MARIO_ACCEL_WALK_X)
+			aniId = ID_ANI_MARIO_WALKING_RIGHT;
+	}
+	else if (vx < 0)// vx < 0
+	{
+		if (ax > 0)
+			aniId = ID_ANI_MARIO_BRACE_LEFT;
+		else if (ax == -MARIO_ACCEL_RUN_X)
+			aniId = ID_ANI_MARIO_RUNNING_LEFT;
+		else if (ax == -MARIO_ACCEL_WALK_X)
+			aniId = ID_ANI_MARIO_WALKING_LEFT;
+	}
+	else if (isHolding)
+	{
+		if (vx == 0)
 		{
 			if (nx > 0)
-				aniId = ID_ANI_MARIO_SIT_RIGHT;
+				aniId = ID_ANI_MARIO_IDLE_HOLD_RIGHT;
 			else
-				aniId = ID_ANI_MARIO_SIT_LEFT;
+				aniId = ID_ANI_MARIO_IDLE_HOLD_LEFT;
 		}
-		else
-			if (vx == 0)
-			{
-				if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-				else aniId = ID_ANI_MARIO_IDLE_LEFT;
-			}
-			else if (vx > 0)
-			{
-				if (ax < 0)
-					aniId = ID_ANI_MARIO_BRACE_RIGHT;
-				else if (ax == MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_WALKING_RIGHT;
-			}
-			else // vx < 0
-			{
-				if (ax > 0)
-					aniId = ID_ANI_MARIO_BRACE_LEFT;
-				else if (ax == -MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_LEFT;
-				else if (ax == -MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_WALKING_LEFT;
-			}
+		else if (vx > 0)
+		{
+			//
+		}
+
+		
+	}
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
@@ -545,6 +559,20 @@ void CMario::SetState(int state)
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
+	case MARIO_STATE_HOLD:
+	{
+		isHolding = true;
+		state = MARIO_STATE_IDLE;
+		break;
+	}
+	case MARIO_STATE_HOLD_RELEASE:
+	{
+		if (isHolding)
+		{
+			isHolding = false;
+		}
+		break;
+	}
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;

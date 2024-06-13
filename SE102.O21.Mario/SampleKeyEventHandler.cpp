@@ -48,7 +48,7 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 		mario->canHold = false;
 		if (mario->isHolding)
 		{
-			mario->isHolding = false;
+			mario->SetState(MARIO_STATE_HOLD_RELEASE);
 			if (mario->obj != NULL)
 			{
 				mario->obj->isHold = false;
