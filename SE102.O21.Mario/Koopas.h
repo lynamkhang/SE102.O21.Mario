@@ -11,8 +11,7 @@
 #define KOOPA_GRAVITY 0.002f
 #define KOOPA_WALKING_SPEED 0.025f
 #define KOOPA_INSHELL_SPEED 0.2f
-#define KOOPA_PICKUP_DELAY 500
-
+#define KOOPA_RESPAWN_TIME 8000
 
 #define KOOPA_BBOX_WIDTH 16
 #define	KOOPA_BBOX_HEIGHT 24
@@ -40,6 +39,7 @@ protected:
 	float ay;
 
 	ULONGLONG die_start;
+	ULONGLONG respawn_start;
 	
 
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

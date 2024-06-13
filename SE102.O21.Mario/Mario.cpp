@@ -52,22 +52,22 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			if (level == MARIO_LEVEL_SMALL)
 			{
-				obj->SetPosition(this->x , this->y - 5);
+				obj->SetPosition(this->x + MARIO_SMALL_BBOX_WIDTH , this->y - 5);
 			}
 			else
 			{
-				obj->SetPosition(this->x, this->y + 5);
+				obj->SetPosition(this->x + MARIO_BIG_BBOX_WIDTH, this->y);
 			}
 		}
 		else
 		{
 			if (level == MARIO_LEVEL_SMALL)
 			{
-				obj->SetPosition(this->x, this->y - 5);
+				obj->SetPosition(this->x - MARIO_SMALL_BBOX_WIDTH, this->y - 5);
 			}
 			else
 			{
-				obj->SetPosition(this->x, this->y + 5);
+				obj->SetPosition(this->x - MARIO_BIG_BBOX_WIDTH, this->y);
 			}
 		}
 	}
