@@ -38,6 +38,5 @@ protected:
 
 public:
 	CLeaf(float x, float y);
-	void StartRising() { rising = true; rise_start = DWORD(GetTickCount64()); }
 	virtual void SetState(int state);
 };
