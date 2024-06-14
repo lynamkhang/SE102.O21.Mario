@@ -13,6 +13,7 @@ plant.txt
 plantfireball.txt
 koopas.txt
 flygoomba.txt
+leaf.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type

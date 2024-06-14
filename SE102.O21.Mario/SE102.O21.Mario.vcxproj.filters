@@ -111,6 +111,9 @@
     <ClInclude Include="FlyGoomba.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Leaf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
@@ -200,6 +203,9 @@
     <ClCompile Include="FlyGoomba.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Leaf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="brick.txt">
@@ -251,6 +257,9 @@
       <Filter>Source Files</Filter>
     </Text>
     <Text Include="flygoomba.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="leaf.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

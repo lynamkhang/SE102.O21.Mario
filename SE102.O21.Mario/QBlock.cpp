@@ -1,5 +1,6 @@
 #include "QBlock.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 #include "Coin.h"
 #include "AssetIDs.h"
 #include "Game.h"
@@ -56,6 +57,7 @@ void CQBlock::GetBoundingBox(float& l, float& t, float& r, float& b)
 }
 
 void CQBlock::ShowItem() {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	if (itemType == 0)
 	{
 		
@@ -68,9 +70,18 @@ void CQBlock::ShowItem() {
 
 	else if (itemType == 1)
 	{
-		CMushroom* mushroom = new CMushroom(x, y);
+		if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+		{
+			CMushroom* mushroom = new CMushroom(x, y);
 
-		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
+			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
+		}
+		else if (mario->GetLevel() == MARIO_LEVEL_BIG)
+		{
+			CLeaf* leaf = new CLeaf(x, y);
+
+			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(leaf);
+		}
 
 	}
 }
