@@ -73,6 +73,13 @@ void CPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		climax = false;
 	}
+
+	if ((state == PLANT_STATE_DIE) && (GetTickCount64() - die_start) > PLANT_DIE_TIMEOUT)
+	{
+		isDeleted = true;
+		return;
+	}
+
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }

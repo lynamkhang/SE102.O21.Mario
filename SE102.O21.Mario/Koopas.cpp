@@ -196,9 +196,10 @@ void CKoopas::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
     CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
-    if (goomba->GetState() != GOOMBA_STATE_DIE)
+    if (goomba->GetState() != GOOMBA_STATE_DIE || goomba->GetState() != GOOMBA_STATE_DEFLECT)
     {
-        goomba->SetState(GOOMBA_STATE_DIE);
+        goomba->SetState(GOOMBA_STATE_DEFLECT);
+        goomba->setVx(0.05f * this->nx);
     }
 }
 
